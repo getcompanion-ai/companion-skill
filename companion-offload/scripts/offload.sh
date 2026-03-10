@@ -86,12 +86,20 @@ rsync -avz --progress \
   -e "$RSYNC_SSH" \
   "$LOCAL_DIR/" "node@$HANDLE:$REMOTE_WORKSPACE/"
 
-# --- Sync Claude session ---
+# --- Sync project-level Claude session ---
 if [ -d "$LOCAL_DIR/.claude" ]; then
-  echo "[offload] Syncing Claude session data..."
+  echo "[offload] Syncing project Claude session data..."
   rsync -avz --progress \
     -e "$RSYNC_SSH" \
     "$LOCAL_DIR/.claude/" "node@$HANDLE:$REMOTE_WORKSPACE/.claude/"
+fi
+
+# --- Sync global ~/.claude config (settings, memory, global session history) ---
+if [ -d "$HOME/.claude" ]; then
+  echo "[offload] Syncing global ~/.claude config..."
+  rsync -avz --progress \
+    -e "$RSYNC_SSH" \
+    "$HOME/.claude/" "node@$HANDLE:/home/node/.claude/"
 fi
 
 # --- Transfer env vars ---

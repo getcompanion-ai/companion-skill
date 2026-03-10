@@ -108,15 +108,25 @@ rsync -avz --progress \
   "$(pwd)/" "node@$HANDLE:$REMOTE_WORKSPACE/"
 ```
 
-### Step 8: Sync the Claude session history
+### Step 8: Sync the Claude session and config
 
-Transfer the local `.claude/` directory (session history, settings, memory) so the remote Claude session has full context:
+Transfer the project-level `.claude/` directory (session history, project memory) if it exists:
 
 ```bash
 rsync -avz --progress \
   -e "ssh $SSH_OPTS" \
   "$(pwd)/.claude/" "node@$HANDLE:$REMOTE_WORKSPACE/.claude/"
 ```
+
+Also sync the global `~/.claude/` directory (global settings, global memory, credentials, CLAUDE.md):
+
+```bash
+rsync -avz --progress \
+  -e "ssh $SSH_OPTS" \
+  "$HOME/.claude/" "node@$HANDLE:/home/node/.claude/"
+```
+
+Both are needed: the project-level `.claude/` has session history for `--continue`, and the global `~/.claude/` has settings, global memory, and the user's global CLAUDE.md instructions.
 
 ### Step 9: Transfer environment variables
 
